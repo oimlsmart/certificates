@@ -47,10 +47,9 @@ export function manifest(): ManifestEntry[] {
 }
 
 export function recs(): string[] {
-  return readdirSync(join(DATA, 'certificates'), { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name)
-    .sort()
+  // Derived from the manifest, not the certificates/ tree: the raw PDF tier
+  // is not checked out in CI (sparse checkout of the digitalized tier only).
+  return [...new Set(manifest().map(e => e.num.split('/')[0]!))].sort()
 }
 
 export function manifestFor(rec: string): ManifestEntry[] {
