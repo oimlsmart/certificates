@@ -42,7 +42,7 @@ jobs:
           test -f dist/schemas/index.html
           test -f dist/story/index.html
           test -f dist/r/R60/index.html
-          cert_page=$(find dist/r/R60 -mindepth 3 -name index.html | head -1)
+          cert_page=$(find dist/r/R60 -mindepth 3 -name index.html -print -quit)
           test -n "$cert_page"
           echo "cert page: $cert_page"
           grep -q "OIML-CS Certificates" dist/index.html
