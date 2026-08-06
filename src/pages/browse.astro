@@ -1,0 +1,43 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../styles/app.css'
+import { recs, manifestFor, digitalizedFor } from '../lib/corpus.ts'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Browse', href: '/browse' },
+  { label: 'Schemas', href: '/schemas' },
+  { label: 'Story', href: '/story' },
+]
+const families = recs().map(rec => ({
+  rec,
+  scraped: manifestFor(rec).length,
+  digitalized: digitalizedFor(rec).length,
+}))
+---
+
+<Base title="Browse the corpus" description="The OIML-CS certificate corpus by Recommendation family.">
+  <MinisiteNav sections={NAV} base="/certificates" />
+  <main class="max-w-4xl mx-auto px-6 py-14">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">OIML-CS Certificates · Browse</p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The Recommendation families</h1>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left border-b border-rule">
+          <th class="py-2 pr-4 font-semibold text-ink">Family</th>
+          <th class="py-2 pr-4 font-semibold text-ink text-right">Scraped</th>
+          <th class="py-2 font-semibold text-ink text-right">Digitalized</th>
+        </tr>
+      </thead>
+      <tbody>
+        {families.map(f => (
+          <tr class="border-b border-rule/60">
+            <td class="py-2 pr-4"><a class="text-accent font-mono" href={`/certificates/r/${f.rec}/`}>{f.rec}</a></td>
+            <td class="py-2 pr-4 text-right text-ink-soft">{f.scraped.toLocaleString()}</td>
+            <td class="py-2 text-right text-ink-soft">{f.digitalized.toLocaleString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </main>
+</Base>
