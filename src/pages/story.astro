@@ -1,0 +1,31 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../styles/app.css'
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Browse', href: '/browse' },
+  { label: 'Schemas', href: '/schemas' },
+  { label: 'Story', href: '/story' },
+]
+---
+
+<Base title="The corpus's story" description="How the OIML-CS certificate corpus was made, and why.">
+  <MinisiteNav sections={NAV} base="/certificates" />
+  <main class="max-w-3xl mx-auto px-6 py-14 docs-body">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">OIML-CS Certificates · Story</p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-6">How the corpus was made, and why</h1>
+
+    <p>The OIML Certification System has issued certificates of conformity for decades, published as PDFs on oiml.org. The register is public, but PDFs are where machine readability goes to die: an applicant's name, a type designation, a status, locked in layout. Every authority and every manufacturer who needs the register as data scrapes it privately and drifts.</p>
+
+    <p>The corpus answers that once: the whole register downloaded with its manifest, and a stratified sample OCR'd into structured, frontmatter-carried markdown — the certificate's number, applicant, issuer, year, status, and full text, with the extraction method and the source PDF named on every document. Per Recommendation family, a schema is synthesized from the parsed content: the field vocabulary that family's certificates actually use.</p>
+
+    <h2>The two tiers, honestly separated</h2>
+    <p>The raw tier is the scrape itself: the PDFs, one repository, untouched. The digitalized tier is derived from it by OCR with the declared extraction method. The browser shows you which is which at every certificate: full text where the digitalized tier covers it, the raw PDF where it does not. The manifest lists everything, digitalized or not.</p>
+
+    <h2>What it feeds</h2>
+    <p>The schemas and the corpus vocabulary inform the machine-readable certificate work (the CNML product's schema space). The corpus is the real-world test set for what a certificate of conformity contains, at scale, across decades.</p>
+
+    <p class="mt-8"><a href="/certificates/browse" class="text-accent font-medium">Browse the families →</a></p>
+  </main>
+</Base>

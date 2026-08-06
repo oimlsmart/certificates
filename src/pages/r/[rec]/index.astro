@@ -1,0 +1,59 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../../../styles/app.css'
+import { recs, manifestFor, digitalizedFor, pdfUrl } from '../../../lib/corpus.ts'
+
+export function getStaticPaths() {
+  return recs().map(rec => ({ params: { rec } }))
+}
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Browse', href: '/browse' },
+  { label: 'Schemas', href: '/schemas' },
+  { label: 'Story', href: '/story' },
+]
+const { rec } = Astro.params
+const all = manifestFor(rec)
+const digi = digitalizedFor(rec)
+const digiByNum = new Map(digi.map(d => [d.num, d]))
+---
+
+<Base title={`${rec} certificates`} description={`The OIML-CS certificates of ${rec}.`}>
+  <MinisiteNav sections={NAV} base="/certificates" />
+  <main class="max-w-5xl mx-auto px-6 py-14">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3"><a href="/certificates/browse" class="text-accent">← Browse</a> · {rec}</p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-2">{rec}</h1>
+    <p class="text-ink-soft mb-8">{all.length.toLocaleString()} certificates scraped · {digi.length} digitalized in full text · <a class="text-accent" href={`/certificates/schemas/${rec}/`}>the {rec} schema</a></p>
+
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left border-b border-rule">
+          <th class="py-2 pr-4 font-semibold text-ink">Number</th>
+          <th class="py-2 pr-4 font-semibold text-ink">Applicant</th>
+          <th class="py-2 pr-4 font-semibold text-ink">Year</th>
+          <th class="py-2 font-semibold text-ink">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {all.map(e => {
+          const d = digiByNum.get(e.num)
+          return (
+            <tr class="border-b border-rule/60">
+              <td class="py-1.5 pr-4 font-mono text-xs">
+                {d
+                  ? <a class="text-accent" href={`/certificates/r/${rec}/${d.year}/${d.slug}/`}>{e.num}</a>
+                  : e.local_path
+                    ? <a class="text-accent" href={pdfUrl(e.local_path)}>{e.num}</a>
+                    : e.num}
+              </td>
+              <td class="py-1.5 pr-4 text-ink-soft">{e.applicant ?? e.name ?? '—'}</td>
+              <td class="py-1.5 pr-4 text-ink-soft">{e.issuingYear}</td>
+              <td class="py-1.5 text-ink-soft">{e.status}</td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+  </main>
+</Base>

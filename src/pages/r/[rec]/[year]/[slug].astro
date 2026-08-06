@@ -1,0 +1,52 @@
+---
+import { Base, MinisiteNav } from '@oimlsmart/site-shell'
+import '../../../../styles/app.css'
+import { recs, digitalizedFor, pdfUrl } from '../../../../lib/corpus.ts'
+
+export function getStaticPaths() {
+  const paths: { params: { rec: string; year: string; slug: string } }[] = []
+  for (const rec of recs()) {
+    for (const d of digitalizedFor(rec)) {
+      paths.push({ params: { rec, year: d.year, slug: d.slug } })
+    }
+  }
+  return paths
+}
+
+const NAV = [
+  { label: 'About', href: '/' },
+  { label: 'Browse', href: '/browse' },
+  { label: 'Schemas', href: '/schemas' },
+  { label: 'Story', href: '/story' },
+]
+const { rec, year, slug } = Astro.params
+const doc = digitalizedFor(rec).find(d => d.year === year && d.slug === slug)!
+// The OCR layer leaves image placeholders with no resolvable target
+// (![](page=0,bbox=[...])); strip them before rendering.
+const cleaned = doc.body.replace(/!\[\]\([^)]*\)/g, '')
+const markdown = await import('marked').then(m => m.marked.parse(cleaned, { async: false })) as string
+---
+
+<Base title={doc.num} description={`OIML-CS certificate ${doc.num} · ${doc.applicant ?? ''}.`}>
+  <MinisiteNav sections={NAV} base="/certificates" />
+  <main class="max-w-4xl mx-auto px-6 py-14">
+    <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3"><a href={`/certificates/r/${rec}/`} class="text-accent">← {rec}</a></p>
+    <h1 class="font-serif text-3xl font-semibold text-ink mb-6">{doc.num}</h1>
+
+    <dl class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-sm">
+      {doc.applicant && <div><dt class="text-ink-muted text-xs">Applicant</dt><dd class="text-ink">{doc.applicant}</dd></div>}
+      {doc.issuer && <div><dt class="text-ink-muted text-xs">Issuer</dt><dd class="text-ink">{doc.issuer}</dd></div>}
+      {doc.issuing_year && <div><dt class="text-ink-muted text-xs">Issuing year</dt><dd class="text-ink">{doc.issuing_year}</dd></div>}
+      {doc.status && <div><dt class="text-ink-muted text-xs">Status</dt><dd class="text-ink">{doc.status}</dd></div>}
+    </dl>
+
+    {doc.source_pdf && (
+      <p class="mb-8 text-sm">
+        <a class="text-accent font-medium" href={pdfUrl(doc.source_pdf)}>Source PDF ({doc.source_pdf})</a>
+        <span class="text-ink-muted"> · extracted by OCR from the digitalized tier of the corpus.</span>
+      </p>
+    )}
+
+    <article class="docs-body border-t border-rule pt-8" set:html={markdown} />
+  </main>
+</Base>

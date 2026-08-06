@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout the shell package (the chrome SSOT)
+        uses: actions/checkout@v4
+        with:
+          repository: oimlsmart/site-shell
+          path: vendor/site-shell
+
+      - name: Checkout the certificates corpus (the data SSOT, digitalized tier only)
+        uses: actions/checkout@v4
+        with:
+          repository: oimlsmart/certificates-data
+          path: vendor/certificates-data
+          sparse-checkout: |
+            ocr_md
+            schema
+            stats
+            manifest.jsonl
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run build
+
+      - name: Verify the built pages
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          test -f dist/browse/index.html
+          test -f dist/schemas/index.html
+          test -f dist/story/index.html
+          test -f dist/r/R60/index.html
+          cert_page=$(find dist/r/R60 -mindepth 3 -name index.html | head -1)
+          test -n "$cert_page"
+          echo "cert page: $cert_page"
+          grep -q "OIML-CS Certificates" dist/index.html
