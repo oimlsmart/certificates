@@ -1,19 +1,14 @@
 ---
-import { Base, MinisiteNav } from '@oimlsmart/site-shell'
-import '../../styles/app.css'
+import Site from '../../layouts/Site.astro'
+import { MinisiteNav } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../../data/nav-config'
 import { recs, schemaFor } from '../../lib/corpus.ts'
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 const families = recs().map(rec => ({ rec, has: !!schemaFor(rec) })).filter(f => f.has)
 ---
 
-<Base title="The schemas" description="The per-Recommendation certificate schemas synthesized from the corpus.">
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title="The schemas" description="The per-Recommendation certificate schemas synthesized from the corpus.">
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-4xl mx-auto px-6 py-14">
     <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">OIML-CS Certificates · Schemas</p>
     <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The per-Recommendation schemas</h1>
@@ -24,4 +19,4 @@ const families = recs().map(rec => ({ rec, has: !!schemaFor(rec) })).filter(f =>
       ))}
     </ul>
   </main>
-</Base>
+</Site>

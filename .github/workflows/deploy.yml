@@ -19,12 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout the shell package (the chrome SSOT)
-        uses: actions/checkout@v4
-        with:
-          repository: oimlsmart/site-shell
-          path: vendor/site-shell
-
       - name: Checkout the certificates corpus (the data SSOT, digitalized tier only)
         uses: actions/checkout@v4
         with:
@@ -41,6 +35,10 @@ jobs:
           node-version: 24
       - run: npm ci
       - run: npm run build
+
+      - name: Nav completeness gate
+        run: npm run check:nav
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

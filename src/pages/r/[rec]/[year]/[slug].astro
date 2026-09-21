@@ -1,6 +1,7 @@
 ---
-import { Base, MinisiteNav } from '@oimlsmart/site-shell'
-import '../../../../styles/app.css'
+import Site from '../../../../layouts/Site.astro'
+import { MinisiteNav } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../../../../data/nav-config'
 import { recs, digitalizedFor, pdfUrl } from '../../../../lib/corpus.ts'
 
 export function getStaticPaths() {
@@ -13,12 +14,6 @@ export function getStaticPaths() {
   return paths
 }
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 const { rec, year, slug } = Astro.params
 const doc = digitalizedFor(rec).find(d => d.year === year && d.slug === slug)!
 // The OCR layer leaves image placeholders with no resolvable target
@@ -27,8 +22,8 @@ const cleaned = doc.body.replace(/!\[\]\([^)]*\)/g, '')
 const markdown = await import('marked').then(m => m.marked.parse(cleaned, { async: false })) as string
 ---
 
-<Base title={doc.num} description={`OIML-CS certificate ${doc.num} · ${doc.applicant ?? ''}.`}>
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title={doc.num} description={`OIML-CS certificate ${doc.num} · ${doc.applicant ?? ''}.`}>
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-4xl mx-auto px-6 py-14">
     <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3"><a href={`/certificates/r/${rec}/`} class="text-accent">← {rec}</a></p>
     <h1 class="font-serif text-3xl font-semibold text-ink mb-6">{doc.num}</h1>
@@ -49,4 +44,4 @@ const markdown = await import('marked').then(m => m.marked.parse(cleaned, { asyn
 
     <article class="docs-body border-t border-rule pt-8" set:html={markdown} />
   </main>
-</Base>
+</Site>

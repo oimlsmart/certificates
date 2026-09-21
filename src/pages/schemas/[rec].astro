@@ -1,18 +1,12 @@
 ---
-import { Base, MinisiteNav } from '@oimlsmart/site-shell'
-import '../../styles/app.css'
+import Site from '../../layouts/Site.astro'
+import { MinisiteNav } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../../data/nav-config'
 import { recs, schemaFor, statsFor } from '../../lib/corpus.ts'
 
 export function getStaticPaths() {
   return recs().filter(r => !!schemaFor(r)).map(rec => ({ params: { rec } }))
 }
-
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 
 type Prop = Record<string, unknown> & { $ref?: string; type?: string | string[]; const?: unknown; enum?: unknown[]; items?: Prop }
 type Definition = { required?: string[]; properties?: Record<string, Prop>; description?: string }
@@ -60,8 +54,8 @@ const statRows = Object.entries(stats?.type_level_characteristics ?? {}).map(([n
 }).sort((a, b) => b.fill - a.fill)
 ---
 
-<Base title={`The ${rec} schema`} description={`The certificate schema of ${rec}, synthesized from the corpus.`}>
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title={`The ${rec} schema`} description={`The certificate schema of ${rec}, synthesized from the corpus.`}>
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-4xl mx-auto px-6 py-14">
     <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3"><a href="/certificates/schemas" class="text-accent">← Schemas</a> · {rec}</p>
     <h1 class="font-serif text-3xl font-semibold text-ink mb-2">The {rec} schema</h1>
@@ -134,4 +128,4 @@ const statRows = Object.entries(stats?.type_level_characteristics ?? {}).map(([n
       </div>
     ))}
   </main>
-</Base>
+</Site>
