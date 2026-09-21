@@ -1,14 +1,9 @@
 ---
-import { Base, MinisiteNav } from '@oimlsmart/site-shell'
-import '../styles/app.css'
+import Site from '../layouts/Site.astro'
+import { MinisiteNav } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../data/nav-config'
 import { recs, manifestFor, digitalizedFor } from '../lib/corpus.ts'
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 const families = recs().map(rec => ({
   rec,
   scraped: manifestFor(rec).length,
@@ -16,8 +11,8 @@ const families = recs().map(rec => ({
 }))
 ---
 
-<Base title="Browse the corpus" description="The OIML-CS certificate corpus by Recommendation family.">
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title="Browse the corpus" description="The OIML-CS certificate corpus by Recommendation family.">
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-4xl mx-auto px-6 py-14">
     <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3">OIML-CS Certificates · Browse</p>
     <h1 class="font-serif text-3xl font-semibold text-ink mb-6">The Recommendation families</h1>
@@ -40,4 +35,4 @@ const families = recs().map(rec => ({
       </tbody>
     </table>
   </main>
-</Base>
+</Site>

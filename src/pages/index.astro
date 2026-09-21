@@ -1,21 +1,16 @@
 ---
-import { Base, MinisiteNav, PageHero } from '@oimlsmart/site-shell'
-import '../styles/app.css'
+import Site from '../layouts/Site.astro'
+import { MinisiteNav, PageHero } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../data/nav-config'
 import { recs, manifest, digitalizedFor } from '../lib/corpus.ts'
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 const families = recs()
 const totalScraped = manifest().length
 const totalDigitalized = families.reduce((n, r) => n + digitalizedFor(r).length, 0)
 ---
 
-<Base title="OIML-CS Certificates" description="The real-world OIML-CS certificate corpus, browsable.">
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title="About" description="The real-world OIML-CS certificate corpus, browsable.">
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-4xl mx-auto px-6 py-14">
     <PageHero
       eyebrow="OIML SMART · The real-world corpus"
@@ -42,4 +37,4 @@ const totalDigitalized = families.reduce((n, r) => n + digitalizedFor(r).length,
     </section>
     <p class="mt-10 text-sm"><a href="/certificates/browse" class="text-accent font-medium">Browse the Recommendation families →</a></p>
   </main>
-</Base>
+</Site>

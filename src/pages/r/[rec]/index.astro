@@ -1,26 +1,21 @@
 ---
-import { Base, MinisiteNav } from '@oimlsmart/site-shell'
-import '../../../styles/app.css'
+import Site from '../../../layouts/Site.astro'
+import { MinisiteNav } from '@oimlsmart/site-shell/chrome/astro'
+import { MINISITE_SECTIONS } from '../../../data/nav-config'
 import { recs, manifestFor, digitalizedFor, pdfUrl } from '../../../lib/corpus.ts'
 
 export function getStaticPaths() {
   return recs().map(rec => ({ params: { rec } }))
 }
 
-const NAV = [
-  { label: 'About', href: '/' },
-  { label: 'Browse', href: '/browse' },
-  { label: 'Schemas', href: '/schemas' },
-  { label: 'Story', href: '/story' },
-]
 const { rec } = Astro.params
 const all = manifestFor(rec)
 const digi = digitalizedFor(rec)
 const digiByNum = new Map(digi.map(d => [d.num, d]))
 ---
 
-<Base title={`${rec} certificates`} description={`The OIML-CS certificates of ${rec}.`}>
-  <MinisiteNav sections={NAV} base="/certificates" />
+<Site title={`${rec} certificates`} description={`The OIML-CS certificates of ${rec}.`}>
+  <MinisiteNav sections={MINISITE_SECTIONS} base="/certificates" />
   <main class="max-w-5xl mx-auto px-6 py-14">
     <p class="font-mono text-xs tracking-widest uppercase text-ink-muted mb-3"><a href="/certificates/browse" class="text-accent">← Browse</a> · {rec}</p>
     <h1 class="font-serif text-3xl font-semibold text-ink mb-2">{rec}</h1>
@@ -56,4 +51,4 @@ const digiByNum = new Map(digi.map(d => [d.num, d]))
       </tbody>
     </table>
   </main>
-</Base>
+</Site>
