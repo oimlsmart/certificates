@@ -23,5 +23,9 @@ const { title, description } = Astro.props
 ---
 
 <Shell title={title} description={description} brand={BRAND} nav={NAV_MODEL} footer={FOOTER}>
+  <!-- Search engines stay out of every OIML SMART site; the meta rides
+       the shell's head slot so every page carries it. Crawl stays open
+       (public/robots.txt allows) so the de-index propagates. -->
+  <meta name="robots" content="noindex, nofollow" slot="head" />
   <slot />
 </Shell>
